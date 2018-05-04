@@ -1,0 +1,87 @@
+# ~/.bashrc: bash configuration
+
+# Determine color support
+case "$TERM" in
+  xterm-color|xterm|screen)
+    colors_enabled=true
+    ;;
+  *)
+    if [ "$(which tput)" ] && [ "$(tput colors)" -ge "1" ]; then
+      colors_enabled=true
+    else
+      colors_enabled=false
+    fi
+    ;;
+esac
+
+# Define prompt
+if [ "$colors_enabled" = true ]; then
+  # colors
+  COLOR_AT="\[\033[39m\]"
+  COLOR_HOST="\[\033[34m\]"
+  COLOR_COLON="\[\033[39m\]"
+  COLOR_PATH="\[\033[33m\]"
+  COLOR_END="\[\033[00m\]"
+
+  if [ "$(id -u)" -eq "0" ]; then
+   COLOR_USER="\[\033[31m\]"
+   COLOR_USERTYPE="\[\033[31m\]"
+  else
+   COLOR_USER="\[\033[32m\]"
+   COLOR_USERTYPE="\[\033[32m\]"
+  fi
+
+  PS1="${COLOR_USER}\u${COLOR_AT}@${COLOR_HOST}\h${COLOR_COLON}:${COLOR_PATH}\w${COLOR_USERTYPE}\\$ ${COLOR_END}"
+else
+  PS1="\u@\h:\w\\$ "
+fi
+
+# Append new history lines to a file, clear history, read history file
+export PROMPT_COMMAND="history -a;history -c;history -r;"
+
+# Enable colors for utililities
+if [ "$colors_enabled" = true ]; then
+  # ls
+  export LS_OPTIONS="--group-directories-first --color=auto"
+  eval "$(dircolors --bourne-shell)"
+  alias ls="ls $LS_OPTIONS " 
+  # bash manual:
+  #  A trailing space in value causes the next word 
+  #  to be checked for alias substitution when the alias is expanded.
+
+  # grep
+  export GREP_OPTIONS="--color=auto"
+fi
+
+# Disable history limits
+export HISTSIZE=16384
+unset HISTFILESIZE
+
+# Define history date format
+export HISTTIMEFORMAT="%F %T "
+
+# Do not store consecutive duplicates, do not store commands that begin with space
+export HISTCONTROL="ignoreboth"
+
+# Do not store the following commands
+export HISTIGNORE="history*:pwd"
+
+# Always append to the history file, don't overwrite it
+shopt -s histappend
+
+# Define default editor and pager
+export EDITOR="/usr/bin/vim"
+export SUDO_EDITOR="$EDITOR"
+export PAGER="/usr/bin/less -R"
+
+# Check window size after each command and, if necessary, update the values of LINES and COLUMNS
+shopt -s checkwinsize
+
+# Define git variables
+[ -f ~/.bash_git ] && . ~/.bash_git
+
+# Define aliases
+[ -f ~/.bash_aliases ] && . ~/.bash_aliases
+
+# Define aliases
+[ -f ~/.bash_functions ] && . ~/.bash_functions

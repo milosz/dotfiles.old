@@ -1,0 +1,7 @@
+# ~/.bash_functions: personal functions
+
+# Display exit code for specified command
+# ecc (exit code check):
+#   $ ecc test -f ~/.bashrc
+#   0
+ecc() { $*; echo $?; }

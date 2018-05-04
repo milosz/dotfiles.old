@@ -1,0 +1,31 @@
+# ~/.bash_aliases: personal aliases
+
+# List files
+alias ll="ls -l"
+alias l="ls -lA"
+
+# Change directories to go up
+alias ..="cd .."
+alias ...="cd ../../"
+
+# Exit using Vim way
+alias :q="exit"
+
+# df
+alias df="df --human-readable --print-type" 
+
+# free
+alias free="free --human --total"
+
+# Some more aliases to avoid making mistakes
+#alias rm="rm -i"
+#alias cp="cp -i"
+#alias mv="mv -i"
+
+# tmux and lxc after exec bash
+# https://github.com/lxc/lxd/issues/936
+# script -qfc tmux /dev/null 
+if [ "$container" == "lxc" ]; then
+  alias ltmux="script --quiet --flush --command \"tmux\" /dev/null"
+  alias ltmuxa="script --quiet --flush --command \"tmux attach\" /dev/null"
+fi

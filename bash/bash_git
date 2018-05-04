@@ -1,0 +1,6 @@
+# ~/.bash_git: git variables
+
+export GIT_AUTHOR_NAME="Milosz Galazka"
+export GIT_AUTHOR_EMAIL="milosz@sleeplessbeastie.eu"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
