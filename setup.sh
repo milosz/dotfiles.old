@@ -15,3 +15,6 @@ setup_config "bash/bash_functions" "~/.bash_functions"
 
 # tmux configuration
 setup_config "/tmux/tmux.conf" "~/.tmux.conf"
+
+# vim configuration
+setup_config "/vim/vimrc" "~/.vimrc"

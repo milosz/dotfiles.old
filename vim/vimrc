@@ -1,0 +1,180 @@
+" Vim configuration
+"
+" sources:
+"   https://laracasts.com/series/vim-mastery
+"   http://vim.wikia.com
+"   https://vimrcfu.com
+
+
+
+""" Plugins
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
+endif
+
+call plug#begin('~/.vim/plugged')
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-surround'
+Plug 'junegunn/vim-easy-align'
+Plug 'altercation/vim-colors-solarized'
+Plug 'itchyny/lightline.vim'
+call plug#end()
+
+
+
+""" General settings
+set nonumber
+set guioptions=-e
+set t_Co=256
+set noerrorbells visualbell t_vb=
+set noshowmode
+set cursorline
+set encoding=utf-8
+set noswapfile
+set nobackup
+
+set background=dark
+set laststatus=2
+set noshowmode
+
+syntax enable
+filetype plugin on
+
+
+
+""" Tabs
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+
+
+
+""" Search
+set nohlsearch
+set incsearch
+
+
+
+""" General mappings
+nnoremap <SPACE> <Nop>
+let mapleader = " "
+
+nnoremap <Leader>ln :set number!<CR>
+nnoremap <Leader>sh :set hlsearch!<CR>
+nnoremap <Leader>si :set incsearch!<CR>
+
+map <leader>dd :.!date +'\%d-\%m-\%Y \%A'<CR>
+map <leader>dh :.!date +'\%H:\%M'<CR>
+
+nnoremap q: <nop>
+nnoremap ; :
+
+
+
+""" Split management
+set splitbelow
+set splitright
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-H> <C-W><C-H>
+nnoremap <C-L> <C-W><C-L>
+
+
+
+""" Buffer management
+set hidden
+
+nnoremap <Leader>[ :bprevious<CR>
+nnoremap <Leader>] :bnext<CR>
+nnoremap <Leader>\ :ls<CR>
+nnoremap <Leader>= :enew<CR>
+nnoremap <Leader>- :bp <BAR> bd #<CR>
+
+
+
+""" Commands
+"" Save using sudo
+command! -nargs=0  WriteWithSudo :w !sudo tee % >/dev/null
+cnoreabbrev ww WriteWithSudo<CR>
+
+"" Common mistakes
+command! -bang W w<bang>
+command! -bang Q q<bang>
+command! -bang WQ wq<bang>
+command! -bang Wq wq<bang>
+
+"" Escape/unescape & < > HTML entities in range (default current line).
+function! HtmlEntities(line1, line2, action)
+  let search = @/
+  let range = 'silent ' . a:line1 . ',' . a:line2
+  if a:action == 0  " must convert &amp; last
+    execute range . 'sno/&lt;/</eg'
+    execute range . 'sno/&gt;/>/eg'
+    execute range . 'sno/&amp;/&/eg'
+  else              " must convert & first
+    execute range . 'sno/&/&amp;/eg'
+    execute range . 'sno/</&lt;/eg'
+    execute range . 'sno/>/&gt;/eg'
+  endif
+  nohl
+  let @/ = search
+endfunction
+command! -range -nargs=1 Entities call HtmlEntities(<line1>, <line2>, <args>)
+
+nnoremap <silent> <Leader>h :Entities 0<CR>
+nnoremap <silent> <Leader>H :Entities 1<CR>
+
+
+""" Auto-Commands
+"" Source .vimrc after save
+augroup vimrc_source
+  autocmd!
+  autocmd BufWritePost .vimrc source %
+augroup END
+
+"" cursorline on active windows only
+augroup cline
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END
+
+"" use K to get help inside vim configuration file
+augroup khelp
+  autocmd!
+  autocmd FileType vim setlocal keywordprg=:help
+augroup END
+
+
+
+""" Plugin settings
+"" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+"" lightline
+colorscheme solarized
+
+let g:lightline = {
+      \ 'colorscheme': 'solarized',
+      \ }
+
+function! ToggleSolarizedTheme()
+  let &background = ( &background == "dark"? "light" : "dark" )
+  if exists("g:lightline")
+    runtime autoload/lightline/colorscheme/solarized.vim
+    call lightline#colorscheme()
+  endif
+endfunction
+map <F12> :call ToggleSolarizedTheme()<CR>
+
+
+
+""" Local settings
+if filereadable(glob("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
