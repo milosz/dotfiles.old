@@ -2,7 +2,21 @@
 # Setup shell script for personal configuration
 
 # shell script and dotfiles location
-dotfiles_location="$(dirname $(readlink -f  $0))"
+os="$(uname -s)"
+if [ "$os" == "Linux" ]; then
+  dotfiles_location="$(dirname $(readlink -f  $0))"
+elif [ "$os" == "Darwin" ]; then
+  which greadlink >/dev/null
+  if [ "$?" -eq "0" ]; then
+    dotfiles_location="$(dirname $(greadlink -f  $0))"
+  else
+    echo "Please install coreutils (brew install coreutils)."
+    exit 1
+  fi
+else
+  echo "OS not supported"
+  exit 1
+fi
 
 # include helper functions
 . ${dotfiles_location}/helpers/shell_functions.sh
